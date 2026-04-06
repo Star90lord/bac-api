@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RBAC-API - Dashboard</title>
+
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+
+<body>
+  <div class="login-container dashboard-container">
+    <div class="login-card">
+
+      <!-- LOGO -->
+      <div class="logo">
+        <h1>RBAC-API</h1>
+        <p>Role-Based Access Control System</p>
+      </div>
+
+      <h2>Dashboard</h2>
+
+      <!-- ERROR (if token invalid or API fails) -->
+      <p id="errorMsg" class="error-text"></p>
+
+      <div class="dashboard-content">
+
+        <!-- ROLE DISPLAY (from backend, NOT editable) -->
+        <div class="role-section">
+          <label><strong>Your Role:</strong></label>
+          <input type="text" id="roleDisplay" disabled />
+        </div>
+
+        <!-- USER INFO -->
+        <div class="user-info">
+          <h3>User Information</h3>
+          <div id="userInfo" class="user-details">
+            <p>Loading user info...</p>
+          </div>
+        </div>
+
+        <!-- ADMIN SECTION (hidden if not admin) -->
+        <div class="admin-section" id="adminSection" style="display:none;">
+          <h3>Admin Panel</h3>
+
+          <button id="getUsersBtn" class="action-btn">
+            Fetch All Users
+          </button>
+
+          <div id="adminData" class="admin-data"></div>
+        </div>
+
+        <!-- ACTIONS -->
+        <div class="dashboard-actions">
+          <button id="logoutBtn" class="logout-btn">
+            Logout
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="../js/api.js" defer></script>
+  <script src="../js/dashboard.js" defer></script>
+
+</body>
+</html>

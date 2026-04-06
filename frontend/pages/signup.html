@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RBAC-API - Sign Up</title>
+
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+
+<body>
+  <div class="login-container">
+    <div class="login-card">
+
+      <div class="logo">
+        <h1>RBAC-API</h1>
+        <p>Role-Based Access Control System</p>
+      </div>
+
+      <h2>Create Account</h2>
+
+      <!-- Error message -->
+      <p id="errorMsg" class="error-text"></p>
+
+      <form id="signupForm">
+
+        <!-- NAME -->
+        <div class="input-group">
+          <label for="name">Full Name</label>
+          <input
+            type="text"
+            id="name"
+            placeholder="Enter your full name"
+            required
+          />
+        </div>
+
+        <!-- EMAIL -->
+        <div class="input-group">
+          <label for="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            placeholder="Enter your email"
+            required
+          />
+        </div>
+
+        <!-- PASSWORD -->
+        <div class="input-group">
+          <label for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            placeholder="Create a strong password"
+            minlength="6"
+            required
+          />
+        </div>
+
+        <!-- ROLE (IMPORTANT FOR RBAC) -->
+        <div class="input-group">
+          <label for="role">Select Role</label>
+          <select id="role" required>
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+
+        <!-- BUTTON -->
+        <button type="submit" class="login-btn" id="signupBtn">
+          Sign Up
+        </button>
+
+      </form>
+
+      <!-- LOADING -->
+      <p id="loadingText" class="loading-text" hidden>
+        Creating account...
+      </p>
+
+      <!-- LINKS -->
+      <div class="links">
+        <p>
+          Already have an account?
+          <a href="index.html">Login here</a>
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- JS -->
+  <script src="../js/api.js" defer></script>
+  <script src="../js/auth.js" defer></script>
+
+</body>
+</html>
