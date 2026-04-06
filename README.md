@@ -1,158 +1,162 @@
-"# BAC-API (Role-Based Access Control API)
+# RBAC-API
 
-A production-ready RESTful API for user authentication and role-based access control (RBAC), built with Node.js, Express, and MongoDB. This API provides secure user registration, login, and profile management with JWT-based authentication and role-based permissions.
+A professional role-based access control API built with Node.js, Express, MongoDB, and a lightweight vanilla JavaScript frontend. The project demonstrates a complete authentication workflow with secure login, protected routes, and role-aware access for `user` and `admin` accounts.
 
-## Features
+## Overview
 
-- **User Authentication**: Secure registration and login with password hashing (bcrypt)
-- **JWT Tokens**: Stateless authentication using JSON Web Tokens
-- **Role-Based Access Control**: Support for user roles (e.g., 'user', 'admin') with middleware for access control
-- **Rate Limiting**: Protection against brute-force attacks with express-rate-limit
-- **CORS Support**: Cross-origin resource sharing enabled for frontend integration
-- **MongoDB Integration**: User data stored in MongoDB with Mongoose ODM
-- **Environment Configuration**: Secure environment variable management with dotenv
-- **Frontend Integration**: Basic HTML/CSS/JS frontend for demonstration
+RBAC-API is a compact full-stack reference project focused on authentication and authorization fundamentals. It combines a modular Express backend with a simple frontend interface to demonstrate how protected APIs and role-based access control work together in a real application flow.
+
+## Key Features
+
+- User registration and login
+- Password hashing with bcrypt
+- JWT-based authentication
+- Protected profile access
+- Role-based route authorization
+- Admin-only user listing
+- Rate limiting and CORS support
+- Lightweight frontend for login, signup, and dashboard flows
 
 ## Tech Stack
 
-- **Backend**: Node.js, Express.js
-- **Database**: MongoDB with Mongoose
-- **Authentication**: JWT (jsonwebtoken), bcrypt for password hashing
-- **Security**: express-rate-limit, CORS
-- **Frontend**: Vanilla HTML, CSS, JavaScript (for demo purposes)
+- Node.js
+- Express.js
+- MongoDB with Mongoose
+- JSON Web Tokens
+- bcrypt / bcryptjs
+- HTML, CSS, and vanilla JavaScript
 
-## Prerequisites
+## API Endpoints
 
-- Node.js (v14 or higher)
-- MongoDB (local or cloud instance like MongoDB Atlas)
-- npm or yarn
+### Authentication
 
-## Installation
+- `POST /api/auth/register`
+- `POST /api/auth/login`
 
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/Star90lord/bac-api.git
-   cd bac-api
-   ```
+### User Routes
 
-2. **Install backend dependencies**:
-   ```bash
-   cd backend
-   npm install
-   ```
+- `GET /api/users/me`
+- `GET /api/users/all` for `admin` users only
 
-3. **Set up environment variables**:
-   Create a `.env` file in the `backend` directory:
-   ```
-   MONGO_URI=your_mongodb_connection_string
-   JWT_SECRET=your_jwt_secret_key
-   PORT=5000
-   ```
+## Getting Started
 
-4. **Start MongoDB**:
-   Ensure MongoDB is running locally or update `MONGO_URI` for a cloud instance.
+### Clone the repository
 
-5. **Run the backend server**:
-   ```bash
-   npm start
-   ```
-   The server will start on `http://localhost:5000`.
+```bash
+git clone [https://github.com/Star90lord/bac-api.git](https://github.com/Star90lord/bac-api/)
+cd bac-api
+```
 
-## Usage
+### Install dependencies
 
-### API Endpoints
+```bash
+cd backend
+npm install
+```
 
-#### Authentication Routes (`/api/auth`)
-- `POST /api/auth/register` - Register a new user
-  - Body: `{ "name": "string", "email": "string", "password": "string" }`
-- `POST /api/auth/login` - Login user
-  - Body: `{ "email": "string", "password": "string" }`
+### Start the backend server
 
-#### User Routes (`/api/users`) - Requires Authentication
-- `GET /api/users/profile` - Get user profile (protected route)
+```bash
+npm start
+```
 
-### Frontend Demo
+The API runs on `http://localhost:5000`.
 
-1. Navigate to the `frontend` directory.
-2. Open `index.html` in a web browser to access the login page.
-3. Use the signup page to create an account, then login to access the dashboard.
+### Open the frontend
 
-### Example API Usage
+Open `frontend/pages/index.html` in your browser to access the login flow.
 
-**Register a User**:
+## Example Requests
+
+### Register a user
+
 ```bash
 curl -X POST http://localhost:5000/api/auth/register \
   -H "Content-Type: application/json" \
-  -d '{"name":"John Doe","email":"john@example.com","password":"password123"}'
+  -d "{\"name\":\"John Doe\",\"email\":\"john@example.com\",\"password\":\"password123\"}"
 ```
 
-**Login**:
+### Login
+
 ```bash
 curl -X POST http://localhost:5000/api/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email":"john@example.com","password":"password123"}'
+  -d "{\"email\":\"john@example.com\",\"password\":\"password123\"}"
 ```
 
-**Get Profile** (with JWT token):
+### Get current user
+
 ```bash
-curl -X GET http://localhost:5000/api/users/profile \
+curl -X GET http://localhost:5000/api/users/me \
   -H "Authorization: Bearer YOUR_JWT_TOKEN"
 ```
 
 ## Project Structure
 
-```
+```text
 bac-api/
 ├── backend/
-│   ├── controllers/
-│   │   ├── authController.js    # Authentication logic
-│   │   └── userController.js    # User management logic
-│   ├── middleware/
-│   │   ├── authMiddleware.js    # JWT verification
-│   │   ├── roleMiddleware.js    # Role-based access control
-│   │   └── rateLimiter.js       # Rate limiting
-│   ├── models/
-│   │   └── User.js              # User schema
-│   ├── routes/
-│   │   ├── authRoutes.js        # Auth routes
-│   │   └── userRoutes.js        # User routes
 │   ├── config/
-│   │   └── db.js                # Database connection
+│   │   └── db.js
+│   ├── controllers/
+│   │   ├── authController.js
+│   │   └── userController.js
+│   ├── middleware/
+│   │   ├── authMiddleware.js
+│   │   ├── rateLimiter.js
+│   │   └── roleMiddleware.js
+│   ├── models/
+│   │   └── User.js
+│   ├── routes/
+│   │   ├── authRoutes.js
+│   │   └── userRoutes.js
 │   ├── utils/
-│   │   └── generateToken.js     # JWT token generation
-│   ├── app.js                   # Express app setup
-│   ├── server.js                # Server entry point
-│   ├── .env                     # Environment variables
-│   └── package.json             # Dependencies
+│   │   └── generateToken.js
+│   ├── app.js
+│   ├── package.json
+│   └── server.js
 ├── frontend/
-│   ├── index.html               # Login page
-│   ├── signup.html              # Registration page
-│   ├── dashboard.html           # User dashboard
-│   ├── style.css                # Styles
-│   └── script.js                # Frontend logic
-└── README.md                    # This file
+│   ├── css/
+│   │   └── style.css
+│   ├── js/
+│   │   ├── api.js
+│   │   ├── auth.js
+│   │   ├── dashboard.js
+│   │   └── guard.js
+│   └── pages/
+│       ├── dashboard.html
+│       ├── index.html
+│       └── signup.html
+├── .gitattributes
+├── .gitignore
+└── README.md
 ```
 
-## Security Features
+## Architecture Notes
 
-- Passwords are hashed using bcrypt before storage
-- JWT tokens expire after 30 days
-- Rate limiting prevents excessive requests (100 per 15 minutes per IP)
-- CORS configured for secure cross-origin requests
-- Input validation and error handling
+- Controllers contain request handling logic
+- Middleware manages authentication, authorization, and rate limiting
+- Models define MongoDB schemas and hooks
+- Routes keep the API surface organized and maintainable
+- Frontend scripts are separated by responsibility for cleaner client-side behavior
+
+## Security
+
+- Passwords are hashed before storage
+- JWTs are used for stateless authentication
+- Protected routes require a valid bearer token
+- Admin-only routes are guarded through dedicated role middleware
+- Rate limiting reduces abuse on public endpoints
+
+## Use Case
+
+This project is well suited for:
+
+- authentication system demos
+- RBAC learning projects
+- starter templates for Node.js APIs
+- portfolio or internship-ready backend showcases
 
 ## Contributing
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Support
-
-For questions or issues, please open an issue on GitHub or contact the maintainers." 
+Contributions and improvements are welcome. If you extend the project, keep the current route, controller, middleware, and model separation intact to preserve clarity and maintainability.
