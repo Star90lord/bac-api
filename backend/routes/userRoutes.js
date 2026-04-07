@@ -2,7 +2,7 @@ const express = require("express");
 const { getUserProfile } = require("../controllers/userController");
 const { protect } = require("../middleware/authMiddleware");
 const { checkRole } = require("../middleware/roleMiddleware");
-const User = require("../models/User");
+const { listAllAccounts } = require("../utils/accountLookup");
 
 const router = express.Router();
 
@@ -15,7 +15,7 @@ router.get("/me", protect, getUserProfile);
  */
 router.get("/all", protect, checkRole("admin"), async (req, res) => {
   try {
-    const users = await User.find().select("-password");
+    const users = await listAllAccounts();
 
     res.json({
       success: true,
@@ -24,6 +24,7 @@ router.get("/all", protect, checkRole("admin"), async (req, res) => {
         name: u.name,
         email: u.email,
         role: u.role,
+        collection: u.collection,
       })),
     });
   } catch (error) {

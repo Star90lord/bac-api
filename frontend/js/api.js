@@ -1,44 +1,71 @@
-const API_BASE = "http://localhost:5000/api";
+const API_HOST =
+  window.location.protocol === "file:"
+    ? "localhost"
+    : window.location.hostname || "localhost";
+const API_BASE = `http://${API_HOST}:5000/api`;
 
-/**
- * Safe request handler with proper error handling
- */
-async function request(endpoint, options = {}) {
+let refreshPromise = null;
+
+async function parsePayload(response) {
   try {
-    const response = await fetch(`${API_BASE}${endpoint}`, {
-      method: options.method || "GET",
-      headers: {
-        "Content-Type": "application/json",
-        ...(options.headers || {}),
-      },
-      body: options.body || undefined,
-    });
-
-    // safely parse JSON (even if empty response)
-    let payload = {};
-    try {
-      payload = await response.json();
-    } catch (err) {
-      payload = {};
-    }
-
-    if (!response.ok) {
-      throw new Error(payload.message || `HTTP Error ${response.status}`);
-    }
-
-    // backend standard: { success, data }
-    return payload.data ?? payload;
+    return await response.json();
   } catch (error) {
-    console.error("API Error:", error.message);
-    throw error;
+    return {};
   }
 }
 
-/**
- * API CLIENT (RBAC SYSTEM)
- */
+async function refreshSession() {
+  if (!refreshPromise) {
+    refreshPromise = fetch(`${API_BASE}/auth/refresh`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then(async (response) => {
+        const payload = await parsePayload(response);
+
+        if (!response.ok) {
+          throw new Error(payload.message || "Session refresh failed");
+        }
+
+        return payload.data;
+      })
+      .finally(() => {
+        refreshPromise = null;
+      });
+  }
+
+  return refreshPromise;
+}
+
+async function request(endpoint, options = {}, shouldRetry = true) {
+  const response = await fetch(`${API_BASE}${endpoint}`, {
+    credentials: "include",
+    method: options.method || "GET",
+    headers: {
+      "Content-Type": "application/json",
+      ...(options.headers || {}),
+    },
+    body: options.body || undefined,
+  });
+
+  const payload = await parsePayload(response);
+
+  if (response.status === 401 && shouldRetry && !endpoint.startsWith("/auth/")) {
+    await refreshSession();
+    return request(endpoint, options, false);
+  }
+
+  if (!response.ok) {
+    throw new Error(payload.message || "Request failed");
+  }
+
+  return payload.data;
+}
+
 window.apiClient = {
-  // LOGIN
   login(credentials) {
     return request("/auth/login", {
       method: "POST",
@@ -46,7 +73,6 @@ window.apiClient = {
     });
   },
 
-  // REGISTER
   register(user) {
     return request("/auth/register", {
       method: "POST",
@@ -54,21 +80,21 @@ window.apiClient = {
     });
   },
 
-  // GET LOGGED IN USER PROFILE
-  getProfile(token) {
-    return request("/users/me", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+  refresh() {
+    return refreshSession();
+  },
+
+  logout() {
+    return request("/auth/logout", {
+      method: "POST",
     });
   },
 
-  // ADMIN ONLY: GET ALL USERS
-  getAllUsers(token) {
-    return request("/users/all", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+  getProfile() {
+    return request("/users/me");
+  },
+
+  getAllUsers() {
+    return request("/users/all");
   },
 };

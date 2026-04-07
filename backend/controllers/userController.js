@@ -1,4 +1,4 @@
-const User = require("../models/User");
+const { findAccountById } = require("../utils/accountLookup");
 
 /**
  * =========================
@@ -16,7 +16,7 @@ const getUserProfile = async (req, res) => {
       });
     }
 
-    const user = await User.findById(req.user.id).select("-password");
+    const user = await findAccountById(req.user.id, req.user.role);
 
     if (!user) {
       return res.status(404).json({
@@ -33,6 +33,7 @@ const getUserProfile = async (req, res) => {
         email: user.email,
         role: user.role,
         createdAt: user.createdAt,
+        collection: user.role === "admin" ? "admins" : "users",
       },
     });
   } catch (error) {

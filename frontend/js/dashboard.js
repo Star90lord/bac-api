@@ -1,5 +1,5 @@
 function redirectToLogin() {
-  window.location.href = "index.html";
+  window.location.replace("index.html");
 }
 
 /**
@@ -8,6 +8,8 @@ function redirectToLogin() {
 function renderUserProfile(user) {
   const userInfo = document.getElementById("userInfo");
   const roleDisplay = document.getElementById("roleDisplay");
+  const accessLevel = document.getElementById("accessLevel");
+  const collectionDisplay = document.getElementById("collectionDisplay");
   const getUsersButton = document.getElementById("getUsersBtn");
   const adminSection = document.getElementById("adminSection");
 
@@ -15,9 +17,26 @@ function renderUserProfile(user) {
 
   if (userInfo) {
     userInfo.innerHTML = `
-      <p><strong>Name:</strong> ${user.name || "N/A"}</p>
-      <p><strong>Email:</strong> ${user.email || "N/A"}</p>
-      <p><strong>Role:</strong> ${user.role || "user"}</p>
+      <article class="detail-card">
+        <span class="info-label">Identity</span>
+        <h4>${user.name || "N/A"}</h4>
+        <p>Account holder name shown for the active protected session.</p>
+      </article>
+      <article class="detail-card">
+        <span class="info-label">Contact</span>
+        <h4>${user.email || "N/A"}</h4>
+        <p>Primary email connected to this role-aware profile.</p>
+      </article>
+      <article class="detail-card">
+        <span class="info-label">Permission Scope</span>
+        <h4>${user.role || "user"}</h4>
+        <p>${user.role === "admin" ? "Elevated visibility with management privileges." : "Standard protected access with a focused dashboard view."}</p>
+      </article>
+      <article class="detail-card">
+        <span class="info-label">Data Source</span>
+        <h4>${user.collection || "users"}</h4>
+        <p>Collection used by the backend to identify this account record.</p>
+      </article>
     `;
   }
 
@@ -25,12 +44,25 @@ function renderUserProfile(user) {
     roleDisplay.value = user.role || "user";
   }
 
+  if (accessLevel) {
+    accessLevel.textContent =
+      user.role === "admin" ? "Admin Privileges" : "Protected User Access";
+  }
+
+  if (collectionDisplay) {
+    collectionDisplay.textContent = user.collection || "users";
+  }
+
   if (adminSection) {
     adminSection.style.display = user.role === "admin" ? "block" : "none";
   }
 
-  if (getUsersButton) {
-    getUsersButton.disabled = user.role !== "admin";
+  if (getUsersButton && user.role !== "admin") {
+    getUsersButton.style.display = "none";
+  }
+
+  if (getUsersButton && user.role === "admin") {
+    getUsersButton.style.display = "block";
   }
 }
 
@@ -38,47 +70,19 @@ function renderUserProfile(user) {
  * LOAD DASHBOARD
  */
 async function loadDashboard() {
-  const token = localStorage.getItem("token");
-  const cachedUser = localStorage.getItem("user");
-
   const userInfo = document.getElementById("userInfo");
 
-  if (!token) {
-    redirectToLogin();
-    return;
-  }
-
-  // STEP 1: try cached user first (fast UI load)
-  if (cachedUser) {
-    try {
-      renderUserProfile(JSON.parse(cachedUser));
-    } catch {}
-  }
-
-  // STEP 2: verify with backend
   try {
-    const user = await window.apiClient.getProfile(token);
-
-    const cleanUser = user?.data || user;
-
-    if (!cleanUser) throw new Error("Invalid user response");
-
-    localStorage.setItem("user", JSON.stringify(cleanUser));
-
-    renderUserProfile(cleanUser);
+    const user = await window.apiClient.getProfile();
+    renderUserProfile(user);
 
   } catch (error) {
-    console.error("Profile error:", error);
-
+    console.error("Auth failed:", error);
     if (userInfo) {
-      userInfo.innerHTML =
-        '<p class="error-text">Session expired. Redirecting...</p>';
+      userInfo.innerHTML = '<p class="error-text">Session expired.</p>';
     }
-
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-
-    setTimeout(redirectToLogin, 1000);
+    alert("Session expired. Please login again.");
+    redirectToLogin();
   }
 }
 
@@ -89,16 +93,10 @@ const getUsersButton = document.getElementById("getUsersBtn");
 
 if (getUsersButton) {
   getUsersButton.addEventListener("click", async () => {
-    const token = localStorage.getItem("token");
     const adminData = document.getElementById("adminData");
 
-    if (!token) {
-      redirectToLogin();
-      return;
-    }
-
     try {
-      const users = await window.apiClient.getAllUsers(token);
+      const users = await window.apiClient.getAllUsers();
 
       const list = users?.data || users;
 
@@ -107,15 +105,15 @@ if (getUsersButton) {
       }
 
       adminData.innerHTML = `
-        <h3>All Users</h3>
         ${list
           .map(
             (user) => `
-              <p>
-                ${user.name || "N/A"} 
-                (${user.email || "N/A"}) - 
-                <strong>${user.role || "user"}</strong>
-              </p>
+              <article class="admin-user-card">
+                <span class="info-label">${user.collection || "accounts"}</span>
+                <h4>${user.name || "N/A"}</h4>
+                <p>${user.email || "N/A"}</p>
+                <p><strong>Role:</strong> ${user.role || "user"}</p>
+              </article>
             `
           )
           .join("")}
@@ -134,9 +132,12 @@ if (getUsersButton) {
 const logoutButton = document.getElementById("logoutBtn");
 
 if (logoutButton) {
-  logoutButton.addEventListener("click", () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+  logoutButton.addEventListener("click", async () => {
+    try {
+      await window.apiClient.logout();
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
     redirectToLogin();
   });
 }

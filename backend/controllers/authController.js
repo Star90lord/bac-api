@@ -1,16 +1,41 @@
-const User = require("../models/User");
-const generateToken = require("../utils/generateToken");
+const jwt = require("jsonwebtoken");
+const {
+  getModelByRole,
+  findAccountByEmail,
+  emailExists,
+  findAccountById,
+} = require("../utils/accountLookup");
+const {
+  generateAccessToken,
+  generateRefreshToken,
+} = require("../utils/generateToken");
 
-/**
- * =========================
- * REGISTER USER
- * =========================
- */
+const cookieOptions = {
+  httpOnly: true,
+  secure: false,
+  sameSite: "Lax",
+  path: "/",
+};
+
+function attachAuthCookies(res, userId) {
+  const accessToken = generateAccessToken(userId);
+  const refreshToken = generateRefreshToken(userId);
+
+  return res
+    .cookie("accessToken", accessToken, {
+      ...cookieOptions,
+      maxAge: 15 * 60 * 1000,
+    })
+    .cookie("refreshToken", refreshToken, {
+      ...cookieOptions,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+}
+
 const registerUser = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, role } = req.body;
 
-    // Basic validation
     if (!name || !email || !password) {
       return res.status(400).json({
         success: false,
@@ -25,53 +50,46 @@ const registerUser = async (req, res) => {
       });
     }
 
-    // Check if user exists
-    const userExists = await User.findOne({ email });
+    const normalizedRole = role === "admin" ? "admin" : "user";
 
-    if (userExists) {
+    if (await emailExists(email)) {
       return res.status(400).json({
         success: false,
         message: "User already exists",
       });
     }
 
-    // Create user (password will be hashed in model middleware)
-    const user = await User.create({
+    const AccountModel = getModelByRole(normalizedRole);
+    const user = await AccountModel.create({
       name,
       email,
       password,
+      role: normalizedRole,
     });
 
-    res.status(201).json({
+    return attachAuthCookies(res, user._id).status(201).json({
       success: true,
       data: {
         _id: user._id,
         name: user.name,
         email: user.email,
         role: user.role,
-        token: generateToken(user._id),
       },
     });
   } catch (error) {
     console.error("REGISTER ERROR:", error);
 
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: error.message || "Server error",
     });
   }
 };
 
-/**
- * =========================
- * LOGIN USER
- * =========================
- */
 const authUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Validation
     if (!email || !password) {
       return res.status(400).json({
         success: false,
@@ -79,47 +97,85 @@ const authUser = async (req, res) => {
       });
     }
 
-    // Find user (include password because it's select:false in schema)
-    const user = await User.findOne({ email }).select("+password");
+    const user = await findAccountByEmail(email, true);
 
-    if (!user) {
+    if (!user || !(await user.matchPassword(password))) {
       return res.status(401).json({
         success: false,
-        message: "Invalid email or password",
+        message: "Invalid credentials",
       });
     }
 
-    // Check password
-    const isMatch = await user.matchPassword(password);
-
-    if (!isMatch) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid email or password",
-      });
-    }
-
-    res.json({
+    return attachAuthCookies(res, user._id).json({
       success: true,
       data: {
         _id: user._id,
         name: user.name,
         email: user.email,
         role: user.role,
-        token: generateToken(user._id),
       },
     });
   } catch (error) {
     console.error("LOGIN ERROR:", error);
 
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: error.message || "Server error",
     });
   }
 };
 
+const refreshUserToken = async (req, res) => {
+  try {
+    const refreshToken = req.cookies?.refreshToken;
+
+    if (!refreshToken) {
+      return res.status(401).json({
+        success: false,
+        message: "Refresh token missing",
+      });
+    }
+
+    const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);
+    const user = await findAccountById(decoded.id);
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    return attachAuthCookies(res, user._id).json({
+      success: true,
+      data: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    });
+  } catch (error) {
+    return res.status(401).json({
+      success: false,
+      message: "Refresh token expired or invalid",
+    });
+  }
+};
+
+const logoutUser = (req, res) => {
+  return res
+    .clearCookie("accessToken", cookieOptions)
+    .clearCookie("refreshToken", cookieOptions)
+    .json({
+      success: true,
+      message: "Logged out",
+    });
+};
+
 module.exports = {
   registerUser,
   authUser,
+  refreshUserToken,
+  logoutUser,
 };

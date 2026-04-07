@@ -9,60 +9,91 @@
 </head>
 
 <body>
-  <div class="login-container dashboard-container">
-    <div class="login-card">
-
-      <!-- LOGO -->
-      <div class="logo">
-        <h1>RBAC-API</h1>
-        <p>Role-Based Access Control System</p>
+  <div class="page-shell">
+    <header class="site-header">
+      <div class="brand-mark">
+        <span class="brand-badge">RB</span>
+        <div>
+          <h1>RBAC-API</h1>
+          <p>Access control workspace</p>
+        </div>
       </div>
+      <div class="header-chip">Protected Dashboard</div>
+    </header>
 
-      <h2>Dashboard</h2>
+    <main class="main-layout dashboard-layout">
+      <section class="dashboard-hero">
+        <div>
+          <p class="eyebrow">Permission overview</p>
+          <h2>Everything important, separated into meaningful cards.</h2>
+          <p class="hero-copy">
+            Review your account identity, role scope, collection source, and
+            privileged actions in a layout designed to use the full dashboard area.
+          </p>
+        </div>
+        <div class="hero-actions">
+          <button id="logoutBtn" class="logout-btn">
+            Logout
+          </button>
+        </div>
+      </section>
 
-      <!-- ERROR (if token invalid or API fails) -->
       <p id="errorMsg" class="error-text"></p>
 
-      <div class="dashboard-content">
+      <section class="stat-grid">
+        <article class="stat-card">
+          <span class="stat-label">Current Role</span>
+          <input type="text" id="roleDisplay" class="stat-field" disabled />
+        </article>
+        <article class="stat-card">
+          <span class="stat-label">Access Layer</span>
+          <div id="accessLevel" class="stat-value">Protected Route</div>
+        </article>
+        <article class="stat-card">
+          <span class="stat-label">Source Collection</span>
+          <div id="collectionDisplay" class="stat-value">Loading...</div>
+        </article>
+      </section>
 
-        <!-- ROLE DISPLAY (from backend, NOT editable) -->
-        <div class="role-section">
-          <label><strong>Your Role:</strong></label>
-          <input type="text" id="roleDisplay" disabled />
-        </div>
-
-        <!-- USER INFO -->
-        <div class="user-info">
-          <h3>User Information</h3>
-          <div id="userInfo" class="user-details">
+      <section class="dashboard-grid">
+        <article class="dashboard-panel">
+          <div class="panel-header">
+            <span class="panel-kicker">Profile Snapshot</span>
+            <h3>Your account details</h3>
+            <p>Identity and access information displayed in separate visual blocks.</p>
+          </div>
+          <div id="userInfo" class="detail-grid">
             <p>Loading user info...</p>
           </div>
-        </div>
+        </article>
 
-        <!-- ADMIN SECTION (hidden if not admin) -->
-        <div class="admin-section" id="adminSection" style="display:none;">
-          <h3>Admin Panel</h3>
+        <article class="dashboard-panel admin-panel" id="adminSection" style="display:none;">
+          <div class="panel-header">
+            <span class="panel-kicker">Admin Controls</span>
+            <h3>Management workspace</h3>
+            <p>Only visible when your role allows elevated access.</p>
+          </div>
 
           <button id="getUsersBtn" class="action-btn">
             Fetch All Users
           </button>
 
-          <div id="adminData" class="admin-data"></div>
-        </div>
+          <div id="adminData" class="admin-grid"></div>
+        </article>
+      </section>
+    </main>
 
-        <!-- ACTIONS -->
-        <div class="dashboard-actions">
-          <button id="logoutBtn" class="logout-btn">
-            Logout
-          </button>
-        </div>
-
-      </div>
-
-    </div>
+    <footer class="site-footer">
+      <p><strong>RBAC-API</strong> · Structured access, clearer permissions.</p>
+      <p>Made by Altamsh Malik</p>
+    </footer>
   </div>
 
   <!-- SCRIPTS -->
+  <script src="../js/guard.js"></script>
+  <script>
+    protectRoute();
+  </script>
   <script src="../js/api.js" defer></script>
   <script src="../js/dashboard.js" defer></script>
 

@@ -1,44 +1,22 @@
 const jwt = require("jsonwebtoken");
-const User = require("../models/User");
+const { findAccountById } = require("../utils/accountLookup");
 
 /**
  * AUTH MIDDLEWARE (PROTECT ROUTES)
  */
 const protect = async (req, res, next) => {
   try {
-    const authHeader = req.headers.authorization;
-
-    // 1. CHECK HEADER EXISTS
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({
-        success: false,
-        message: "No token provided",
-      });
-    }
-
-    // 2. EXTRACT TOKEN
-    const token = authHeader.split(" ")[1];
+    const token = req.cookies?.accessToken;
 
     if (!token) {
       return res.status(401).json({
         success: false,
-        message: "Token missing",
+        message: "Not authorized",
       });
     }
 
-    // 3. VERIFY TOKEN
-    let decoded;
-    try {
-      decoded = jwt.verify(token, process.env.JWT_SECRET);
-    } catch (err) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid or expired token",
-      });
-    }
-
-    // 4. FETCH USER FROM DB
-    const user = await User.findById(decoded.id).select("-password");
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await findAccountById(decoded.id);
 
     if (!user) {
       return res.status(401).json({
@@ -55,13 +33,11 @@ const protect = async (req, res, next) => {
       role: user.role,
     };
 
-    next();
+    return next();
   } catch (error) {
-    console.error("Auth middleware error:", error);
-
-    return res.status(500).json({
+    return res.status(401).json({
       success: false,
-      message: "Server error in authentication",
+      message: "Token expired or invalid",
     });
   }
 };

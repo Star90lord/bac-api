@@ -9,88 +9,124 @@
 </head>
 
 <body>
-  <div class="login-container">
-    <div class="login-card">
-
-      <div class="logo">
-        <h1>RBAC-API</h1>
-        <p>Role-Based Access Control System</p>
+  <div class="page-shell">
+    <header class="site-header">
+      <div class="brand-mark">
+        <span class="brand-badge">RB</span>
+        <div>
+          <h1>RBAC-API</h1>
+          <p>Access control workspace</p>
+        </div>
       </div>
+      <div class="header-chip">Role-Aware Signup</div>
+    </header>
 
-      <h2>Create Account</h2>
-
-      <!-- Error message -->
-      <p id="errorMsg" class="error-text"></p>
-
-      <form id="signupForm">
-
-        <!-- NAME -->
-        <div class="input-group">
-          <label for="name">Full Name</label>
-          <input
-            type="text"
-            id="name"
-            placeholder="Enter your full name"
-            required
-          />
-        </div>
-
-        <!-- EMAIL -->
-        <div class="input-group">
-          <label for="email">Email</label>
-          <input
-            type="email"
-            id="email"
-            placeholder="Enter your email"
-            required
-          />
-        </div>
-
-        <!-- PASSWORD -->
-        <div class="input-group">
-          <label for="password">Password</label>
-          <input
-            type="password"
-            id="password"
-            placeholder="Create a strong password"
-            minlength="6"
-            required
-          />
-        </div>
-
-        <!-- ROLE (IMPORTANT FOR RBAC) -->
-        <div class="input-group">
-          <label for="role">Select Role</label>
-          <select id="role" required>
-            <option value="user">User</option>
-            <option value="admin">Admin</option>
-          </select>
-        </div>
-
-        <!-- BUTTON -->
-        <button type="submit" class="login-btn" id="signupBtn">
-          Sign Up
-        </button>
-
-      </form>
-
-      <!-- LOADING -->
-      <p id="loadingText" class="loading-text" hidden>
-        Creating account...
-      </p>
-
-      <!-- LINKS -->
-      <div class="links">
-        <p>
-          Already have an account?
-          <a href="index.html">Login here</a>
+    <main class="main-layout auth-layout">
+      <section class="hero-panel">
+        <p class="eyebrow">Build the right account</p>
+        <h2>Create a profile with a role that matches your access level.</h2>
+        <p class="hero-copy">
+          Register as a standard user or admin and step into a dashboard that
+          explains what each role can access using structured visual panels.
         </p>
-      </div>
 
-    </div>
+        <div class="info-grid">
+          <article class="info-box">
+            <span class="info-label">User Role</span>
+            <strong>Focused access</strong>
+            <p>Ideal for standard profile visibility and protected page access.</p>
+          </article>
+          <article class="info-box">
+            <span class="info-label">Admin Role</span>
+            <strong>Broader control</strong>
+            <p>See management tools and inspect account data across collections.</p>
+          </article>
+          <article class="info-box accent-box">
+            <span class="info-label">System Design</span>
+            <strong>Structured account creation</strong>
+            <p>Collect user identity, choose responsibility, and launch securely.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="auth-card">
+        <div class="panel-header">
+          <span class="panel-kicker">New Account</span>
+          <h3>Create your RBAC profile</h3>
+          <p>Fill in the details below and choose the role you want to test.</p>
+        </div>
+
+        <p id="errorMsg" class="error-text"></p>
+
+        <form id="signupForm">
+          <div class="input-group">
+            <label for="name">Full name</label>
+            <input
+              type="text"
+              id="name"
+              placeholder="Enter your full name"
+              required
+            />
+          </div>
+
+          <div class="input-group">
+            <label for="email">Email address</label>
+            <input
+              type="email"
+              id="email"
+              placeholder="you@example.com"
+              required
+            />
+          </div>
+
+          <div class="input-group">
+            <label for="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              placeholder="Create a strong password"
+              minlength="6"
+              required
+            />
+          </div>
+
+          <div class="input-group">
+            <label for="role">Choose role</label>
+            <select id="role" required>
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+
+          <button type="submit" class="login-btn" id="signupBtn">
+            Create Account
+          </button>
+        </form>
+
+        <p id="loadingText" class="loading-text" hidden>
+          Creating your workspace...
+        </p>
+
+        <div class="links">
+          <p>
+            Already have an account?
+            <a href="index.html">Login here</a>
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p><strong>RBAC-API</strong> · Structured access, clearer permissions.</p>
+      <p>Made by Altamsh Malik</p>
+    </footer>
   </div>
 
   <!-- JS -->
+  <script src="../js/guard.js"></script>
+  <script>
+    preventAuthPages();
+  </script>
   <script src="../js/api.js" defer></script>
   <script src="../js/auth.js" defer></script>
 

@@ -1,162 +1,260 @@
-# RBAC-API
+#  RBAC-API
 
-A professional role-based access control API built with Node.js, Express, MongoDB, and a lightweight vanilla JavaScript frontend. The project demonstrates a complete authentication workflow with secure login, protected routes, and role-aware access for `user` and `admin` accounts.
+![Node.js](https://img.shields.io/badge/Node.js-18+-green)
+![Express](https://img.shields.io/badge/Express.js-Backend-black)
+![MongoDB](https://img.shields.io/badge/MongoDB-Database-green)
+![JWT](https://img.shields.io/badge/Auth-JWT-blue)
+![License](https://img.shields.io/badge/License-MIT-yellow)
 
-## Overview
+A production-ready **Role-Based Access Control (RBAC)** API built with Node.js, Express, and MongoDB.  
+This project demonstrates secure authentication, scalable backend architecture, and real-world authorization patterns.
 
-RBAC-API is a compact full-stack reference project focused on authentication and authorization fundamentals. It combines a modular Express backend with a simple frontend interface to demonstrate how protected APIs and role-based access control work together in a real application flow.
+---
 
-## Key Features
+## Live Demo
 
-- User registration and login
-- Password hashing with bcrypt
+**API Base URL:**  
+ https://your-api.onrender.com
+
+ **Frontend Demo:**  
+ https://your-frontend.vercel.app
+
+>  Note: Free hosting services may take a few seconds to wake up.
+
+---
+
+##  Screenshots
+
+###  Authentication Flow
+![Login](./docs/screenshots/login.png)
+
+###  User Dashboard
+![Dashboard](./docs/screenshots/dashboard.png)
+
+###  Admin Panel (RBAC)
+![Admin](./docs/screenshots/admin.png)
+
+---
+
+##  Features
+
+###  Authentication
+- Secure user registration & login
+- Password hashing using bcrypt
 - JWT-based authentication
-- Protected profile access
-- Role-based route authorization
-- Admin-only user listing
-- Rate limiting and CORS support
-- Lightweight frontend for login, signup, and dashboard flows
+- Stateless session handling
 
-## Tech Stack
+###  Authorization (RBAC)
+- Role-based access (`user`, `admin`)
+- Middleware-driven permission control
+- Admin-only protected routes
 
+###  Backend Engineering
+- Clean modular architecture
+- Separation of concerns (routes, controllers, middleware, models)
+- Centralized error handling
+- Rate limiting & CORS security
+
+###  Frontend (Vanilla JS)
+- Login & signup UI
+- Token storage and handling
+- Route protection (guard.js)
+- Dashboard rendering
+
+---
+
+##  Tech Stack
+
+### Backend
 - Node.js
 - Express.js
-- MongoDB with Mongoose
-- JSON Web Tokens
-- bcrypt / bcryptjs
-- HTML, CSS, and vanilla JavaScript
+- MongoDB + Mongoose
+- JSON Web Tokens (JWT)
+- bcryptjs
 
-## API Endpoints
+### Frontend
+- HTML5
+- CSS3
+- Vanilla JavaScript
 
-### Authentication
+---
 
-- `POST /api/auth/register`
-- `POST /api/auth/login`
+##  API Reference
 
-### User Routes
+###  Auth Routes
+| Method | Endpoint | Description |
+|-------|--------|-------------|
+| POST | `/api/auth/register` | Register new user |
+| POST | `/api/auth/login` | Authenticate user |
 
-- `GET /api/users/me`
-- `GET /api/users/all` for `admin` users only
+###  User Routes
+| Method | Endpoint | Access | Description |
+|-------|--------|--------|-------------|
+| GET | `/api/users/me` | Protected | Get current user |
+| GET | `/api/users/all` | Admin only | Get all users |
 
-## Getting Started
+---
 
-### Clone the repository
+##  Architecture
 
+```
+Client → Routes → Middleware → Controllers → Models → Database
+```
+
+### Request Flow
+
+1. Client sends request to API  
+2. Route matches endpoint  
+3. Authentication middleware verifies JWT  
+4. Role middleware checks permissions  
+5. Controller executes business logic  
+6. Response returned to client  
+
+---
+
+##  Getting Started
+
+### 1. Clone Repository
 ```bash
-git clone [https://github.com/Star90lord/bac-api.git](https://github.com/Star90lord/bac-api/)
+git clone https://github.com/Star90lord/bac-api.git
 cd bac-api
 ```
 
-### Install dependencies
+### 2. Install Dependencies
 
 ```bash
 cd backend
 npm install
 ```
 
-### Start the backend server
+### 3. Configure Environment Variables
+
+Create a `.env` file in the `backend` directory:
+
+```env
+PORT=5000
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_secret_key
+```
+
+### 4. Run the Server
 
 ```bash
 npm start
 ```
 
-The API runs on `http://localhost:5000`.
+Server will run at:
 
-### Open the frontend
+```
+http://localhost:5000
+```
 
-Open `frontend/pages/index.html` in your browser to access the login flow.
+### 5. Run the Frontend
 
-## Example Requests
+Open:
 
-### Register a user
+```
+frontend/pages/index.html
+```
+
+---
+
+## API Testing
+
+### Register User
 
 ```bash
 curl -X POST http://localhost:5000/api/auth/register \
-  -H "Content-Type: application/json" \
-  -d "{\"name\":\"John Doe\",\"email\":\"john@example.com\",\"password\":\"password123\"}"
+-H "Content-Type: application/json" \
+-d '{"name":"John Doe","email":"john@example.com","password":"password123"}'
 ```
 
-### Login
+### Login User
 
 ```bash
 curl -X POST http://localhost:5000/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d "{\"email\":\"john@example.com\",\"password\":\"password123\"}"
+-H "Content-Type: application/json" \
+-d '{"email":"john@example.com","password":"password123"}'
 ```
 
-### Get current user
+### Get Current User
 
 ```bash
 curl -X GET http://localhost:5000/api/users/me \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+-H "Authorization: Bearer YOUR_JWT_TOKEN"
 ```
+
+---
 
 ## Project Structure
 
 ```text
 bac-api/
 ├── backend/
-│   ├── config/
-│   │   └── db.js
-│   ├── controllers/
-│   │   ├── authController.js
-│   │   └── userController.js
-│   ├── middleware/
-│   │   ├── authMiddleware.js
-│   │   ├── rateLimiter.js
-│   │   └── roleMiddleware.js
-│   ├── models/
-│   │   └── User.js
-│   ├── routes/
-│   │   ├── authRoutes.js
-│   │   └── userRoutes.js
-│   ├── utils/
-│   │   └── generateToken.js
-│   ├── app.js
-│   ├── package.json
-│   └── server.js
+│   ├── config/        # Database configuration
+│   ├── controllers/   # Business logic
+│   ├── middleware/    # Auth, role, rate limiting
+│   ├── models/        # Mongoose schemas
+│   ├── routes/        # API routes
+│   ├── utils/         # Helper functions
+│   ├── app.js         # Express setup
+│   └── server.js      # Entry point
+│
 ├── frontend/
 │   ├── css/
-│   │   └── style.css
 │   ├── js/
-│   │   ├── api.js
-│   │   ├── auth.js
-│   │   ├── dashboard.js
-│   │   └── guard.js
 │   └── pages/
-│       ├── dashboard.html
-│       ├── index.html
-│       └── signup.html
-├── .gitattributes
-├── .gitignore
+│
+├── docs/
+│   └── screenshots/
+│
 └── README.md
 ```
 
-## Architecture Notes
-
-- Controllers contain request handling logic
-- Middleware manages authentication, authorization, and rate limiting
-- Models define MongoDB schemas and hooks
-- Routes keep the API surface organized and maintainable
-- Frontend scripts are separated by responsibility for cleaner client-side behavior
+---
 
 ## Security
 
-- Passwords are hashed before storage
-- JWTs are used for stateless authentication
-- Protected routes require a valid bearer token
-- Admin-only routes are guarded through dedicated role middleware
-- Rate limiting reduces abuse on public endpoints
+* Passwords are hashed before storage
+* JWT enables stateless authentication
+* Protected routes require valid Bearer tokens
+* Role-based middleware enforces authorization
+* Rate limiting prevents brute-force attacks
 
-## Use Case
+---
 
-This project is well suited for:
+## Future Improvements
 
-- authentication system demos
-- RBAC learning projects
-- starter templates for Node.js APIs
-- portfolio or internship-ready backend showcases
+* Refresh token implementation
+* Email verification system
+* Password reset flow
+* API documentation (Swagger)
+* Docker containerization
+* Unit & integration testing (Jest, Supertest)
+* CI/CD pipeline
 
-## Contributing
+---
 
-Contributions and improvements are welcome. If you extend the project, keep the current route, controller, middleware, and model separation intact to preserve clarity and maintainability.
+## Use Cases
+
+* Backend portfolio project
+* Authentication system reference
+* RBAC learning implementation
+* Starter template for scalable APIs
+
+---
+
+##  Contributing
+
+Contributions are welcome.
+Please maintain the modular architecture and clean code practices when extending the project.
+
+---
+
+##  Author
+
+**Your Name**
+GitHub: [https://github.com/Star90lord](https://github.com/Star90lord)
+
+---
+

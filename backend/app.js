@@ -1,10 +1,11 @@
 const express = require("express");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
 
 // Import routes
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
-const { apiLimiter, authLimiter } = require("./middleware/rateLimiter");
+const { apiLimiter } = require("./middleware/rateLimiter");
 
 // Create app
 const app = express();
@@ -15,6 +16,7 @@ const app = express();
 
 // Allow JSON body parsing
 app.use(express.json());
+app.use(cookieParser());
 app.use(apiLimiter);
 
 // FIX: CORS (development safe)
@@ -40,7 +42,7 @@ app.use((req, res, next) => {
 // ======================
 // ROUTES
 // ======================
-app.use("/api/auth", authLimiter, authRoutes);
+app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 
 // ======================

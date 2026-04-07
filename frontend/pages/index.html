@@ -9,72 +9,108 @@
 </head>
 
 <body>
-  <div class="login-container">
-    <div class="login-card">
-
-      <!-- LOGO -->
-      <div class="logo">
-        <h1>RBAC-API</h1>
-        <p>Role-Based Access Control System</p>
+  <div class="page-shell">
+    <header class="site-header">
+      <div class="brand-mark">
+        <span class="brand-badge">RB</span>
+        <div>
+          <h1>RBAC-API</h1>
+          <p>Access control workspace</p>
+        </div>
       </div>
+      <div class="header-chip">Secure Login Portal</div>
+    </header>
 
-      <h2>Login to Your Account</h2>
-
-      <!-- ERROR MESSAGE -->
-      <p id="errorMsg" class="error-text"></p>
-
-      <!-- LOGIN FORM -->
-      <form id="loginForm">
-
-        <!-- EMAIL -->
-        <div class="input-group">
-          <label for="email">Email</label>
-          <input
-            type="email"
-            id="email"
-            placeholder="Enter your email"
-            required
-            autocomplete="email"
-          />
-        </div>
-
-        <!-- PASSWORD -->
-        <div class="input-group">
-          <label for="password">Password</label>
-          <input
-            type="password"
-            id="password"
-            placeholder="Enter your password"
-            required
-            minlength="6"
-            autocomplete="current-password"
-          />
-        </div>
-
-        <!-- LOGIN BUTTON -->
-        <button type="submit" class="login-btn" id="loginBtn">
-          Login
-        </button>
-
-      </form>
-
-      <!-- LOADING STATE -->
-      <p id="loadingText" class="loading-text" hidden>
-        Logging in...
-      </p>
-
-      <!-- LINKS -->
-      <div class="links">
-        <p>
-          Don't have an account?
-          <a href="signup.html">Create account</a>
+    <main class="main-layout auth-layout">
+      <section class="hero-panel">
+        <p class="eyebrow">Control access with clarity</p>
+        <h2>Welcome back to a cleaner RBAC command center.</h2>
+        <p class="hero-copy">
+          Sign in to review your role, inspect protected resources, and move
+          through a dashboard designed to make permissions easy to understand.
         </p>
-      </div>
 
-    </div>
+        <div class="info-grid">
+          <article class="info-box">
+            <span class="info-label">Protected Access</span>
+            <strong>Cookie-based auth</strong>
+            <p>Secure sign-in flow with guarded routes and session validation.</p>
+          </article>
+          <article class="info-box">
+            <span class="info-label">Role Intelligence</span>
+            <strong>User and admin views</strong>
+            <p>Different privileges are surfaced clearly inside dedicated panels.</p>
+          </article>
+          <article class="info-box accent-box">
+            <span class="info-label">Workflow</span>
+            <strong>Authenticate → Verify → Explore</strong>
+            <p>A compact full-stack demo built to feel closer to a real product.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="auth-card">
+        <div class="panel-header">
+          <span class="panel-kicker">Member Sign In</span>
+          <h3>Login to your account</h3>
+          <p>Use your registered credentials to access the RBAC dashboard.</p>
+        </div>
+
+        <p id="errorMsg" class="error-text"></p>
+
+        <form id="loginForm">
+          <div class="input-group">
+            <label for="email">Email address</label>
+            <input
+              type="email"
+              id="email"
+              placeholder="you@example.com"
+              required
+              autocomplete="email"
+            />
+          </div>
+
+          <div class="input-group">
+            <label for="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              placeholder="Enter your password"
+              required
+              minlength="6"
+              autocomplete="current-password"
+            />
+          </div>
+
+          <button type="submit" class="login-btn" id="loginBtn">
+            Enter Dashboard
+          </button>
+        </form>
+
+        <p id="loadingText" class="loading-text" hidden>
+          Verifying your session...
+        </p>
+
+        <div class="links">
+          <p>
+            Don&apos;t have an account?
+            <a href="signup.html">Create account</a>
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p><strong>RBAC-API</strong> · Structured access, clearer permissions.</p>
+      <p>Made by Altamsh Malik</p>
+    </footer>
   </div>
 
   <!-- SCRIPTS -->
+  <script src="../js/guard.js"></script>
+  <script>
+    preventAuthPages();
+  </script>
   <script src="../js/api.js" defer></script>
   <script src="../js/auth.js" defer></script>
 

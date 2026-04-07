@@ -19,52 +19,44 @@ function setAuthState({ error = "", loading = false }) {
 }
 
 function redirectToDashboard() {
-  window.location.href = "dashboard.html";
+  window.location.replace("dashboard.html");
 }
 
 /**
  * LOGIN HANDLER
  */
 const loginForm = document.getElementById("loginForm");
+let isSubmitting = false;
 
 if (loginForm) {
   loginForm.addEventListener("submit", async (event) => {
     event.preventDefault();
+
+    if (isSubmitting) {
+      return;
+    }
+
+    isSubmitting = true;
     setAuthState({ error: "", loading: true });
 
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value.trim();
 
-    // frontend validation
     if (!email || !password) {
+      isSubmitting = false;
       setAuthState({ error: "All fields are required", loading: false });
       return;
     }
 
     try {
-      const data = await window.apiClient.login({ email, password });
-
-      const token = data?.token;
-      const user = {
-        _id: data?._id,
-        name: data?.name,
-        email: data?.email,
-      };
-
-      if (!token) {
-        throw new Error("Token not received from server");
-      }
-
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
-      redirectToDashboard();
+      await window.apiClient.login({ email, password });
+      window.location.replace("dashboard.html");
 
     } catch (error) {
       console.error("Login error:", error);
-      setAuthState({
-        error: error.message || "Login failed",
-        loading: false,
-      });
+      isSubmitting = false;
+      setAuthState({ loading: false });
+      alert(error.message || "Login failed");
     }
   });
 }
@@ -82,31 +74,20 @@ if (signupForm) {
     const name = document.getElementById("name").value.trim();
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value.trim();
+    const role = document.getElementById("role")?.value || "user";
+
     if (!name || !email || !password) {
       setAuthState({ error: "All fields are required", loading: false });
       return;
     }
 
     try {
-      const data = await window.apiClient.register({
+      await window.apiClient.register({
         name,
         email,
         password,
+        role,
       });
-
-      const token = data?.token;
-      const user = {
-        _id: data?._id,
-        name: data?.name,
-        email: data?.email,
-      };
-
-      if (!token) {
-        throw new Error("Token not received from server");
-      }
-
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
       redirectToDashboard();
 
     } catch (error) {
