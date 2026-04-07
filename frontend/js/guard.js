@@ -8,7 +8,7 @@ const isLocalFrontend =
   window.location.hostname === "127.0.0.1";
 const fallbackApiBase = isLocalFrontend
   ? `http://${window.location.hostname === "127.0.0.1" ? "127.0.0.1" : "localhost"}:5000/api`
-  : "https://bac-api-n1je.onrender.com/api";
+  : "https://bac-api-arcl.onrender.com/api";
 const AUTH_API_BASE =
   window.appConfig?.apiBase || fallbackApiBase.replace(/\/+$/, "");
 const shouldLogGuardFailures = Boolean(window.appConfig?.isLocalFrontend);

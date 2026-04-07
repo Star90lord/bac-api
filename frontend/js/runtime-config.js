@@ -14,7 +14,7 @@
 
   const fallbackApiBase = isLocalFrontend
     ? `http://${localApiHost}:5000/api`
-    : "https://bac-api-n1je.onrender.com/api";
+    : "https://bac-api-arcl.onrender.com/api";
 
   window.appConfig = {
     isLocalFrontend,
