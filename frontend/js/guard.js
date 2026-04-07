@@ -6,9 +6,12 @@ const isLocalFrontend =
   window.location.protocol === "file:" ||
   window.location.hostname === "localhost" ||
   window.location.hostname === "127.0.0.1";
-const AUTH_API_BASE = isLocalFrontend
+const fallbackApiBase = isLocalFrontend
   ? `http://${window.location.hostname === "127.0.0.1" ? "127.0.0.1" : "localhost"}:5000/api`
   : "https://bac-api-n1je.onrender.com/api";
+const AUTH_API_BASE =
+  window.appConfig?.apiBase || fallbackApiBase.replace(/\/+$/, "");
+const shouldLogGuardFailures = Boolean(window.appConfig?.isLocalFrontend);
 
 function redirectToLogin() {
   window.location.replace("index.html");
@@ -18,27 +21,40 @@ function redirectToDashboard() {
   window.location.replace("dashboard.html");
 }
 
+async function safeSessionRequest(endpoint, options = {}) {
+  try {
+    return await fetch(`${AUTH_API_BASE}${endpoint}`, {
+      credentials: "include",
+      cache: "no-store",
+      ...options,
+    });
+  } catch (error) {
+    if (shouldLogGuardFailures) {
+      console.warn("Guard check failed:", error.message || error);
+    }
+
+    return null;
+  }
+}
+
 // 🔐 Protect dashboard page
 async function hasActiveSession() {
-  try {
-    const profileResponse = await fetch(`${AUTH_API_BASE}/users/me`, {
-      credentials: "include",
+  const profileResponse = await safeSessionRequest("/users/me");
+
+  if (!profileResponse) {
+    return false;
+  }
+
+  if (profileResponse.ok) {
+    return true;
+  }
+
+  if (profileResponse.status === 401) {
+    const refreshResponse = await safeSessionRequest("/auth/refresh", {
+      method: "POST",
     });
 
-    if (profileResponse.ok) {
-      return true;
-    }
-
-    if (profileResponse.status === 401) {
-      const refreshResponse = await fetch(`${AUTH_API_BASE}/auth/refresh`, {
-        method: "POST",
-        credentials: "include",
-      });
-
-      return refreshResponse.ok;
-    }
-  } catch (error) {
-    console.error("Guard check failed:", error);
+    return Boolean(refreshResponse?.ok);
   }
 
   return false;

@@ -1,9 +1,5 @@
 const rateLimit = require("express-rate-limit");
 
-/**
- * GENERAL API LIMITER
- * Apply to all routes
- */
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100,
@@ -24,10 +20,6 @@ const apiLimiter = rateLimit({
   },
 });
 
-/**
- * STRICT LIMITER FOR AUTH ROUTES
- * (login/register protection against brute force)
- */
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 10, // very strict

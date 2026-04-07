@@ -1,9 +1,6 @@
 const jwt = require("jsonwebtoken");
 const { findAccountById } = require("../utils/accountLookup");
 
-/**
- * AUTH MIDDLEWARE (PROTECT ROUTES)
- */
 const protect = async (req, res, next) => {
   try {
     const token = req.cookies?.accessToken;

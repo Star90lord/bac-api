@@ -1,11 +1,5 @@
 const { findAccountById } = require("../utils/accountLookup");
 
-/**
- * =========================
- * GET USER PROFILE
- * =========================
- * Uses req.user from auth middleware
- */
 const getUserProfile = async (req, res) => {
   try {
     // AUTH CHECK

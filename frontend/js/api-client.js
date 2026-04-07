@@ -1,14 +1,32 @@
 (function () {
-  const isLocalFrontend =
+  const fallbackApiBase =
     window.location.protocol === "file:" ||
     window.location.hostname === "localhost" ||
-    window.location.hostname === "127.0.0.1";
+    window.location.hostname === "127.0.0.1"
+      ? `http://${window.location.hostname === "127.0.0.1" ? "127.0.0.1" : "localhost"}:5000/api`
+      : "https://bac-api-n1je.onrender.com/api";
 
-  const apiBase = isLocalFrontend
-    ? `http://${window.location.hostname === "127.0.0.1" ? "127.0.0.1" : "localhost"}:5000/api`
-    : "https://bac-api-n1je.onrender.com/api";
+  const apiBase =
+    window.appConfig?.apiBase || fallbackApiBase.replace(/\/+$/, "");
 
   let refreshPromise = null;
+
+  function getRequestHeaders(options = {}) {
+    const headers = {
+      ...(options.headers || {}),
+    };
+
+    const hasBody = options.body !== undefined && options.body !== null;
+    const hasContentType =
+      Object.prototype.hasOwnProperty.call(headers, "Content-Type") ||
+      Object.prototype.hasOwnProperty.call(headers, "content-type");
+
+    if (hasBody && !hasContentType) {
+      headers["Content-Type"] = "application/json";
+    }
+
+    return headers;
+  }
 
   async function parsePayload(response) {
     try {
@@ -23,9 +41,6 @@
       refreshPromise = fetch(`${apiBase}/auth/refresh`, {
         method: "POST",
         credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
       })
         .then(async (response) => {
           const payload = await parsePayload(response);
@@ -36,6 +51,13 @@
 
           return payload.data;
         })
+        .catch((error) => {
+          if (error instanceof TypeError) {
+            throw new Error("Unable to connect to the backend server");
+          }
+
+          throw error;
+        })
         .finally(() => {
           refreshPromise = null;
         });
@@ -45,15 +67,23 @@
   }
 
   async function request(endpoint, options = {}, shouldRetry = true) {
-    const response = await fetch(`${apiBase}${endpoint}`, {
-      credentials: "include",
-      method: options.method || "GET",
-      headers: {
-        "Content-Type": "application/json",
-        ...(options.headers || {}),
-      },
-      body: options.body || undefined,
-    });
+    let response;
+
+    try {
+      const headers = getRequestHeaders(options);
+      response = await fetch(`${apiBase}${endpoint}`, {
+        credentials: "include",
+        method: options.method || "GET",
+        ...(Object.keys(headers).length ? { headers } : {}),
+        body: options.body || undefined,
+      });
+    } catch (error) {
+      if (error instanceof TypeError) {
+        throw new Error("Unable to connect to the backend server");
+      }
+
+      throw error;
+    }
 
     const payload = await parsePayload(response);
 
