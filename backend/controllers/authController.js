@@ -10,10 +10,12 @@ const {
   generateRefreshToken,
 } = require("../utils/generateToken");
 
+const isProduction = process.env.NODE_ENV === "production";
+
 const cookieOptions = {
   httpOnly: true,
-  secure: false,
-  sameSite: "Lax",
+  secure: isProduction,
+  sameSite: isProduction ? "None" : "Lax",
   path: "/",
 };
 

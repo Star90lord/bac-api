@@ -6,11 +6,6 @@ dotenv.config({ path: path.join(__dirname, ".env") });
 const app = require("./app");
 const connectDB = require("./config/db");
 
-/**
- * =========================
- * HANDLE SYNC ERRORS
- * =========================
- */
 process.on("uncaughtException", (err) => {
   console.error("=================================");
   console.error("❌ UNCAUGHT EXCEPTION");
@@ -21,11 +16,6 @@ process.on("uncaughtException", (err) => {
 
 let server;
 
-/**
- * =========================
- * START APPLICATION
- * =========================
- */
 const startServer = async () => {
   try {
     // DB CONNECTION (clean modern mongoose - no deprecated options)
@@ -48,11 +38,6 @@ const startServer = async () => {
   }
 };
 
-/**
- * =========================
- * HANDLE ASYNC ERRORS
- * =========================
- */
 process.on("unhandledRejection", (err) => {
   console.error("=================================");
   console.error("❌ UNHANDLED PROMISE REJECTION");
@@ -66,11 +51,7 @@ process.on("unhandledRejection", (err) => {
   }
 });
 
-/**
- * =========================
- * GRACEFUL SHUTDOWN
- * =========================
- */
+
 process.on("SIGTERM", () => {
   console.log("=================================");
   console.log("⚠️ SIGTERM RECEIVED - Shutting down...");
@@ -83,7 +64,5 @@ process.on("SIGTERM", () => {
   }
 });
 
-/**
- * START APP
- */
+
 startServer();

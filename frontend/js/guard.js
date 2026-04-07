@@ -2,11 +2,13 @@
 // AUTH GUARD (PROTECT PAGES)
 // ===============================
 
-const AUTH_HOST =
-  window.location.protocol === "file:"
-    ? "localhost"
-    : window.location.hostname || "localhost";
-const AUTH_API_BASE = `http://${AUTH_HOST}:5000/api`;
+const isLocalFrontend =
+  window.location.protocol === "file:" ||
+  window.location.hostname === "localhost" ||
+  window.location.hostname === "127.0.0.1";
+const AUTH_API_BASE = isLocalFrontend
+  ? `http://${window.location.hostname === "127.0.0.1" ? "127.0.0.1" : "localhost"}:5000/api`
+  : "https://bac-api-n1je.onrender.com/api";
 
 function redirectToLogin() {
   window.location.replace("index.html");

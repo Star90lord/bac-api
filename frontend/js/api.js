@@ -1,8 +1,10 @@
-const API_HOST =
-  window.location.protocol === "file:"
-    ? "localhost"
-    : window.location.hostname || "localhost";
-const API_BASE = `http://${API_HOST}:5000/api`;
+const isLocalFrontend =
+  window.location.protocol === "file:" ||
+  window.location.hostname === "localhost" ||
+  window.location.hostname === "127.0.0.1";
+const API_BASE = isLocalFrontend
+  ? `http://${window.location.hostname === "127.0.0.1" ? "127.0.0.1" : "localhost"}:5000/api`
+  : "https://bac-api-n1je.onrender.com/api";
 
 let refreshPromise = null;
 

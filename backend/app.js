@@ -9,6 +9,14 @@ const { apiLimiter } = require("./middleware/rateLimiter");
 
 // Create app
 const app = express();
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  "https://rbac-api.vercel.app",
+  "http://127.0.0.1:5500",
+  "http://localhost:5500",
+  "http://127.0.0.1:3000",
+  "http://localhost:3000",
+].filter(Boolean);
 
 // ======================
 // MIDDLEWARE
@@ -22,13 +30,14 @@ app.use(apiLimiter);
 // FIX: CORS (development safe)
 app.use(
   cors({
-    origin: [
-      "http://127.0.0.1:5500",
-      "http://localhost:5500",
-      "http://127.0.0.1:3000",
-      "http://localhost:3000",
-    ],
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    origin(origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error("CORS origin not allowed"));
+    },
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     credentials: true,
   })
 );
