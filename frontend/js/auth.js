@@ -18,17 +18,56 @@ function setAuthState({ error = "", loading = false }) {
   }
 }
 
-function redirectToDashboard() {
-  window.location.replace("dashboard.html");
+function redirectAfterAuth(account) {
+  if (account?.role === "admin") {
+    window.location.replace("dashboard.html");
+    return;
+  }
+
+  window.location.replace("home.html");
 }
 
-/**
- * LOGIN HANDLER
- */
 const loginForm = document.getElementById("loginForm");
 let isSubmitting = false;
 
 if (loginForm) {
+  const modeButtons = Array.from(document.querySelectorAll("[data-login-mode]"));
+  let activeMode =
+    document.getElementById("loginMode")?.value?.trim() || "user";
+
+  function syncModeButtons(nextMode) {
+    activeMode = nextMode;
+
+    const modeInput = document.getElementById("loginMode");
+    const helperText = document.getElementById("loginModeHelp");
+
+    if (modeInput) {
+      modeInput.value = nextMode;
+    }
+
+    if (helperText) {
+      helperText.textContent =
+        nextMode === "admin"
+          ? "Admin login is reserved for the configured admin account only."
+          : "Use your customer account to access the freelancing marketplace.";
+    }
+
+    modeButtons.forEach((button) => {
+      button.classList.toggle(
+        "mode-toggle-btn-active",
+        button.dataset.loginMode === nextMode
+      );
+    });
+  }
+
+  modeButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      syncModeButtons(button.dataset.loginMode || "user");
+    });
+  });
+
+  syncModeButtons(activeMode);
+
   loginForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
@@ -44,26 +83,29 @@ if (loginForm) {
 
     if (!email || !password) {
       isSubmitting = false;
-      setAuthState({ error: "All fields are required", loading: false });
+      setAuthState({ error: "Email and password are required", loading: false });
       return;
     }
 
     try {
-      await window.apiClient.login({ email, password });
-      window.location.replace("dashboard.html");
+      const account = await window.apiClient.login({
+        email,
+        password,
+        loginAs: activeMode,
+      });
 
+      redirectAfterAuth(account);
     } catch (error) {
       console.error("Login error:", error);
       isSubmitting = false;
-      setAuthState({ loading: false });
-      alert(error.message || "Login failed");
+      setAuthState({
+        error: error.message || "Login failed",
+        loading: false,
+      });
     }
   });
 }
 
-/**
- * SIGNUP HANDLER
- */
 const signupForm = document.getElementById("signupForm");
 
 if (signupForm) {
@@ -74,7 +116,6 @@ if (signupForm) {
     const name = document.getElementById("name").value.trim();
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value.trim();
-    const role = document.getElementById("role")?.value || "user";
 
     if (!name || !email || !password) {
       setAuthState({ error: "All fields are required", loading: false });
@@ -86,10 +127,9 @@ if (signupForm) {
         name,
         email,
         password,
-        role,
       });
-      redirectToDashboard();
 
+      window.location.replace("home.html");
     } catch (error) {
       console.error("Signup error:", error);
       setAuthState({

@@ -14,6 +14,10 @@
     window.location.replace("index.html");
   }
 
+  function redirectToHome() {
+    window.location.replace("home.html");
+  }
+
   function redirectToDashboard() {
     window.location.replace("dashboard.html");
   }
@@ -68,11 +72,12 @@
     const isAuthenticated = await hasActiveSession();
 
     if (isAuthenticated) {
-      redirectToDashboard();
+      redirectToHome();
     }
   }
 
   window.redirectToLogin = redirectToLogin;
+  window.redirectToHome = redirectToHome;
   window.redirectToDashboard = redirectToDashboard;
   window.hasActiveSession = hasActiveSession;
   window.protectRoute = protectRoute;

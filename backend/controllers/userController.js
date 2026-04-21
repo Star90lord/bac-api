@@ -26,6 +26,7 @@ const getUserProfile = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        avatar: user.avatar || "",
         createdAt: user.createdAt,
         collection: user.role === "admin" ? "admins" : "users",
       },
@@ -40,4 +41,57 @@ const getUserProfile = async (req, res) => {
   }
 };
 
-module.exports = { getUserProfile };
+const updateUserProfile = async (req, res) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        message: "Not authorized",
+      });
+    }
+
+    const user = await findAccountById(req.user.id, req.user.role);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const nextName = String(req.body?.name || "").trim();
+    const nextAvatar = String(req.body?.avatar || "").trim();
+
+    if (nextName) {
+      user.name = nextName;
+    }
+
+    if (req.body && Object.prototype.hasOwnProperty.call(req.body, "avatar")) {
+      user.avatar = nextAvatar;
+    }
+
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        avatar: user.avatar || "",
+        createdAt: user.createdAt,
+        collection: user.role === "admin" ? "admins" : "users",
+      },
+    });
+  } catch (error) {
+    console.error("Update User Profile Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Server error while updating profile",
+    });
+  }
+};
+
+module.exports = { getUserProfile, updateUserProfile };

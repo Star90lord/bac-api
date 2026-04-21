@@ -3,63 +3,72 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RBAC-API - Login</title>
-
+  <title>SkillBridge - Login</title>
   <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
   <link rel="stylesheet" href="../css/style.css" />
 </head>
-
 <body>
   <div class="page-shell">
     <header class="site-header">
-      <div class="brand-mark">
-        <span class="brand-badge">RB</span>
+      <a class="brand-mark" href="home.html">
+        <span class="brand-badge">SB</span>
         <div>
-          <h1>RBAC-API</h1>
-          <p>Access control workspace</p>
+          <h1>SkillBridge</h1>
+          <p>Secure sign in for clients and the fixed admin account</p>
         </div>
-      </div>
-      <div class="header-chip">Secure Login Portal</div>
+      </a>
+      <nav class="site-actions" id="siteActions"></nav>
     </header>
 
     <main class="main-layout auth-layout">
       <section class="hero-panel">
-        <p class="eyebrow">Control access with clarity</p>
-        <h2>Welcome back to a cleaner RBAC command center.</h2>
-        <p class="hero-copy">
-          Sign in to review your role, inspect protected resources, and move
-          through a dashboard designed to make permissions easy to understand.
-        </p>
+        <div>
+          <span class="eyebrow">Welcome back</span>
+          <h2 class="hero-title">Login to continue with your freelance marketplace account.</h2>
+          <p class="hero-copy">
+            User accounts can browse services and manage profiles, while admin access
+            is reserved for the single configured admin account only.
+          </p>
+        </div>
 
-        <div class="info-grid">
-          <article class="info-box">
-            <span class="info-label">Protected Access</span>
-            <strong>Cookie-based auth</strong>
-            <p>Secure sign-in flow with guarded routes and session validation.</p>
+        <div class="section-grid">
+          <article class="feature-card">
+            <span class="info-label">User login</span>
+            <h3>Client access</h3>
+            <p>Regular users can sign in and continue exploring the home and service pages.</p>
           </article>
-          <article class="info-box">
-            <span class="info-label">Role Intelligence</span>
-            <strong>User and admin views</strong>
-            <p>Different privileges are surfaced clearly inside dedicated panels.</p>
+          <article class="feature-card">
+            <span class="info-label">Admin login</span>
+            <h3>Protected management</h3>
+            <p>The admin mode on this page is only for the configured admin account and is not shown on signup.</p>
           </article>
-          <article class="info-box accent-box">
-            <span class="info-label">Workflow</span>
-            <strong>Authenticate → Verify → Explore</strong>
-            <p>A compact full-stack demo built to feel closer to a real product.</p>
+          <article class="feature-card">
+            <span class="info-label">Profile tools</span>
+            <h3>Dropdown controls</h3>
+            <p>After login, the header switches to a profile dropdown with name, photo upload, and logout.</p>
           </article>
         </div>
       </section>
 
       <section class="auth-card">
         <div class="panel-header">
-          <span class="panel-kicker">Member Sign In</span>
-          <h3>Login to your account</h3>
-          <p>Use your registered credentials to access the RBAC dashboard.</p>
+          <span class="panel-kicker">Member access</span>
+          <h3>Login to SkillBridge</h3>
+          <p>Choose the account type below. Admin mode is only for the fixed admin account.</p>
         </div>
 
         <p id="errorMsg" class="error-text"></p>
 
+        <div class="mode-toggle" aria-label="Login mode">
+          <button type="button" class="mode-toggle-btn" data-login-mode="user">User Login</button>
+          <button type="button" class="mode-toggle-btn" data-login-mode="admin">Admin Login</button>
+        </div>
+
+        <p id="loginModeHelp" class="mode-help"></p>
+
         <form id="loginForm">
+          <input type="hidden" id="loginMode" value="user" />
+
           <div class="input-group">
             <label for="email">Email address</label>
             <input
@@ -83,38 +92,33 @@
             />
           </div>
 
-          <button type="submit" class="login-btn" id="loginBtn">
-            Enter Dashboard
-          </button>
+          <button type="submit" class="login-btn" id="loginBtn">Login</button>
         </form>
 
-        <p id="loadingText" class="loading-text" hidden>
-          Verifying your session...
-        </p>
+        <p id="loadingText" class="loading-text" hidden>Checking your credentials...</p>
 
         <div class="links">
           <p>
-            Don&apos;t have an account?
-            <a href="signup.html">Create account</a>
+            Need a client account?
+            <a href="signup.html">Create one here</a>
           </p>
         </div>
       </section>
     </main>
 
     <footer class="site-footer">
-      <p><strong>RBAC-API</strong> · Structured access, clearer permissions.</p>
-      <p>Made by Altamsh Malik</p>
+      <p><strong>SkillBridge</strong> keeps client login simple and admin access protected.</p>
+      <p>Created for Altamash Malik</p>
     </footer>
   </div>
 
-  <!-- SCRIPTS -->
   <script src="../js/runtime-config.js"></script>
   <script src="../js/route-guard.js"></script>
   <script>
     preventAuthPages();
   </script>
   <script src="../js/api-client.js" defer></script>
+  <script src="../js/site-shell.js" defer></script>
   <script src="../js/auth.js" defer></script>
-
 </body>
 </html>

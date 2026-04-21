@@ -84,8 +84,9 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-// Allow JSON body parsing
-app.use(express.json());
+// Allow JSON body parsing with increased limit for image uploads
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use(cookieParser());
 app.use(apiLimiter);
 

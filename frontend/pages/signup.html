@@ -3,58 +3,58 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RBAC-API - Sign Up</title>
-
+  <title>SkillBridge - Register</title>
   <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
   <link rel="stylesheet" href="../css/style.css" />
 </head>
-
 <body>
   <div class="page-shell">
     <header class="site-header">
-      <div class="brand-mark">
-        <span class="brand-badge">RB</span>
+      <a class="brand-mark" href="home.html">
+        <span class="brand-badge">SB</span>
         <div>
-          <h1>RBAC-API</h1>
-          <p>Access control workspace</p>
+          <h1>SkillBridge</h1>
+          <p>Create a client account and start browsing freelance services</p>
         </div>
-      </div>
-      <div class="header-chip">Role-Aware Signup</div>
+      </a>
+      <nav class="site-actions" id="siteActions"></nav>
     </header>
 
     <main class="main-layout auth-layout">
       <section class="hero-panel">
-        <p class="eyebrow">Build the right account</p>
-        <h2>Create a profile with a role that matches your access level.</h2>
-        <p class="hero-copy">
-          Register as a standard user or admin and step into a dashboard that
-          explains what each role can access using structured visual panels.
-        </p>
+        <div>
+          <span class="eyebrow">Create your account</span>
+          <h2 class="hero-title">Join the marketplace as a client and discover freelance services faster.</h2>
+          <p class="hero-copy">
+            New accounts are always created as normal users now. The signup form no longer includes admin role selection,
+            and once you finish registration you will land on the SkillBridge home page.
+          </p>
+        </div>
 
-        <div class="info-grid">
-          <article class="info-box">
-            <span class="info-label">User Role</span>
-            <strong>Focused access</strong>
-            <p>Ideal for standard profile visibility and protected page access.</p>
+        <div class="section-grid">
+          <article class="feature-card">
+            <span class="info-label">Safe registration</span>
+            <h3>No self-assigned admin</h3>
+            <p>The account creation flow only creates standard user accounts.</p>
           </article>
-          <article class="info-box">
-            <span class="info-label">Admin Role</span>
-            <strong>Broader control</strong>
-            <p>See management tools and inspect account data across collections.</p>
+          <article class="feature-card">
+            <span class="info-label">Quick start</span>
+            <h3>Direct home redirect</h3>
+            <p>After signup you go straight to the marketplace home page instead of a permissions dashboard.</p>
           </article>
-          <article class="info-box accent-box">
-            <span class="info-label">System Design</span>
-            <strong>Structured account creation</strong>
-            <p>Collect user identity, choose responsibility, and launch securely.</p>
+          <article class="feature-card">
+            <span class="info-label">Profile ready</span>
+            <h3>Name and photo tools</h3>
+            <p>Your header dropdown lets you update the display name and add a profile picture later.</p>
           </article>
         </div>
       </section>
 
       <section class="auth-card">
         <div class="panel-header">
-          <span class="panel-kicker">New Account</span>
-          <h3>Create your RBAC profile</h3>
-          <p>Fill in the details below and choose the role you want to test.</p>
+          <span class="panel-kicker">Client signup</span>
+          <h3>Create your SkillBridge account</h3>
+          <p>Fill in the form below to get started with service browsing.</p>
         </div>
 
         <p id="errorMsg" class="error-text"></p>
@@ -67,6 +67,7 @@
               id="name"
               placeholder="Enter your full name"
               required
+              autocomplete="name"
             />
           </div>
 
@@ -77,6 +78,7 @@
               id="email"
               placeholder="you@example.com"
               required
+              autocomplete="email"
             />
           </div>
 
@@ -88,29 +90,18 @@
               placeholder="Create a strong password"
               minlength="6"
               required
+              autocomplete="new-password"
             />
           </div>
 
-          <div class="input-group">
-            <label for="role">Choose role</label>
-            <select id="role" required>
-              <option value="user">User</option>
-              <option value="admin">Admin</option>
-            </select>
-          </div>
-
-          <button type="submit" class="login-btn" id="signupBtn">
-            Create Account
-          </button>
+          <button type="submit" class="login-btn" id="signupBtn">Create Account</button>
         </form>
 
-        <p id="loadingText" class="loading-text" hidden>
-          Creating your workspace...
-        </p>
+        <p id="loadingText" class="loading-text" hidden>Creating your account...</p>
 
         <div class="links">
           <p>
-            Already have an account?
+            Already registered?
             <a href="index.html">Login here</a>
           </p>
         </div>
@@ -118,19 +109,18 @@
     </main>
 
     <footer class="site-footer">
-      <p><strong>RBAC-API</strong> · Structured access, clearer permissions.</p>
-      <p>Made by Altamsh Malik</p>
+      <p><strong>SkillBridge</strong> signup now creates client accounts only.</p>
+      <p>Created for Altamash Malik</p>
     </footer>
   </div>
 
-  <!-- JS -->
   <script src="../js/runtime-config.js"></script>
   <script src="../js/route-guard.js"></script>
   <script>
     preventAuthPages();
   </script>
   <script src="../js/api-client.js" defer></script>
+  <script src="../js/site-shell.js" defer></script>
   <script src="../js/auth.js" defer></script>
-
 </body>
 </html>

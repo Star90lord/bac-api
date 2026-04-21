@@ -1,5 +1,8 @@
 const express = require("express");
-const { getUserProfile } = require("../controllers/userController");
+const {
+  getUserProfile,
+  updateUserProfile,
+} = require("../controllers/userController");
 const { protect } = require("../middleware/authMiddleware");
 const { checkRole } = require("../middleware/roleMiddleware");
 const { listAllAccounts } = require("../utils/accountLookup");
@@ -7,6 +10,7 @@ const { listAllAccounts } = require("../utils/accountLookup");
 const router = express.Router();
 
 router.get("/me", protect, getUserProfile);
+router.put("/me", protect, updateUserProfile);
 
 /**
  * GET ALL USERS (ADMIN ONLY)

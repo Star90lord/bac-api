@@ -3,39 +3,34 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RBAC-API - Dashboard</title>
-
+  <title>SkillBridge - Admin Dashboard</title>
   <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
   <link rel="stylesheet" href="../css/style.css" />
 </head>
-
 <body>
   <div class="page-shell">
     <header class="site-header">
-      <div class="brand-mark">
-        <span class="brand-badge">RB</span>
+      <a class="brand-mark" href="home.html">
+        <span class="brand-badge">SB</span>
         <div>
-          <h1>RBAC-API</h1>
-          <p>Access control workspace</p>
+          <h1>SkillBridge</h1>
+          <p>Protected admin and account overview</p>
         </div>
-      </div>
-      <div class="header-chip">Protected Dashboard</div>
+      </a>
+      <nav class="site-actions" id="siteActions"></nav>
     </header>
 
     <main class="main-layout dashboard-layout">
       <section class="dashboard-hero">
         <div>
-          <p class="eyebrow">Permission overview</p>
-          <h2>Everything important, separated into meaningful cards.</h2>
+          <span class="eyebrow">Protected workspace</span>
+          <h2>Review account access, profile data, and admin-only member listings.</h2>
           <p class="hero-copy">
-            Review your account identity, role scope, collection source, and
-            privileged actions in a layout designed to use the full dashboard area.
+            This dashboard is available after authentication, with management tools shown only when the logged-in account is the configured admin.
           </p>
         </div>
         <div class="hero-actions">
-          <button id="logoutBtn" class="logout-btn">
-            Logout
-          </button>
+          <a class="secondary-btn" href="home.html">Back to Marketplace</a>
         </div>
       </section>
 
@@ -47,11 +42,11 @@
           <input type="text" id="roleDisplay" class="stat-field" disabled />
         </article>
         <article class="stat-card">
-          <span class="stat-label">Access Layer</span>
-          <div id="accessLevel" class="stat-value">Protected Route</div>
+          <span class="stat-label">Access Level</span>
+          <div id="accessLevel" class="stat-value">Loading...</div>
         </article>
         <article class="stat-card">
-          <span class="stat-label">Source Collection</span>
+          <span class="stat-label">Collection</span>
           <div id="collectionDisplay" class="stat-value">Loading...</div>
         </article>
       </section>
@@ -59,45 +54,41 @@
       <section class="dashboard-grid">
         <article class="dashboard-panel">
           <div class="panel-header">
-            <span class="panel-kicker">Profile Snapshot</span>
-            <h3>Your account details</h3>
-            <p>Identity and access information displayed in separate visual blocks.</p>
+            <span class="panel-kicker">Profile overview</span>
+            <h3>Your active session details</h3>
+            <p>See the signed-in account information exactly as the backend returns it.</p>
           </div>
           <div id="userInfo" class="detail-grid">
             <p>Loading user info...</p>
           </div>
         </article>
 
-        <article class="dashboard-panel admin-panel" id="adminSection" style="display:none;">
+        <article class="dashboard-panel" id="adminSection" style="display:none;">
           <div class="panel-header">
-            <span class="panel-kicker">Admin Controls</span>
-            <h3>Management workspace</h3>
-            <p>Only visible when your role allows elevated access.</p>
+            <span class="panel-kicker">Admin controls</span>
+            <h3>Platform member overview</h3>
+            <p id="adminIntro">Loading admin tools...</p>
           </div>
 
-          <button id="getUsersBtn" class="action-btn">
-            Fetch All Users
-          </button>
-
+          <button id="getUsersBtn" class="action-btn">Fetch All Accounts</button>
           <div id="adminData" class="admin-grid"></div>
         </article>
       </section>
     </main>
 
     <footer class="site-footer">
-      <p><strong>RBAC-API</strong> · Structured access, clearer permissions.</p>
-      <p>Made by Altamsh Malik</p>
+      <p><strong>SkillBridge</strong> keeps admin visibility separate from customer signup.</p>
+      <p>Created for Altamash Malik</p>
     </footer>
   </div>
 
-  <!-- SCRIPTS -->
   <script src="../js/runtime-config.js"></script>
   <script src="../js/route-guard.js"></script>
   <script>
     protectRoute();
   </script>
   <script src="../js/api-client.js" defer></script>
+  <script src="../js/site-shell.js" defer></script>
   <script src="../js/dashboard.js" defer></script>
-
 </body>
 </html>

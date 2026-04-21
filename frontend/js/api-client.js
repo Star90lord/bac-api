@@ -128,6 +128,13 @@
       return request("/users/me");
     },
 
+    updateProfile(updates) {
+      return request("/users/me", {
+        method: "PUT",
+        body: JSON.stringify(updates),
+      });
+    },
+
     getAllUsers() {
       return request("/users/all");
     },

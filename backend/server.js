@@ -5,10 +5,11 @@ dotenv.config({ path: path.join(__dirname, ".env") });
 
 const app = require("./app");
 const connectDB = require("./config/db");
+const ensureAdminAccount = require("./utils/seedAdminAccount");
 
 process.on("uncaughtException", (err) => {
   console.error("=================================");
-  console.error("❌ UNCAUGHT EXCEPTION");
+  console.error("UNCAUGHT EXCEPTION");
   console.error(`${err.name}: ${err.message}`);
   console.error("=================================");
   process.exit(1);
@@ -18,20 +19,19 @@ let server;
 
 const startServer = async () => {
   try {
-    // DB CONNECTION (clean modern mongoose - no deprecated options)
     await connectDB();
+    await ensureAdminAccount();
 
     const PORT = process.env.PORT || 5000;
 
     server = app.listen(PORT, () => {
       console.log("=================================");
-      console.log(`🚀 Server running on port ${PORT}`);
+      console.log(`Server running on port ${PORT}`);
       console.log("=================================");
     });
-
   } catch (error) {
     console.error("=================================");
-    console.error("❌ SERVER START FAILED");
+    console.error("SERVER START FAILED");
     console.error(error.message);
     console.error("=================================");
     process.exit(1);
@@ -40,7 +40,7 @@ const startServer = async () => {
 
 process.on("unhandledRejection", (err) => {
   console.error("=================================");
-  console.error("❌ UNHANDLED PROMISE REJECTION");
+  console.error("UNHANDLED PROMISE REJECTION");
   console.error(`${err.name}: ${err.message}`);
   console.error("=================================");
 
@@ -51,10 +51,9 @@ process.on("unhandledRejection", (err) => {
   }
 });
 
-
 process.on("SIGTERM", () => {
   console.log("=================================");
-  console.log("⚠️ SIGTERM RECEIVED - Shutting down...");
+  console.log("SIGTERM RECEIVED - Shutting down...");
   console.log("=================================");
 
   if (server) {
@@ -63,6 +62,5 @@ process.on("SIGTERM", () => {
     });
   }
 });
-
 
 startServer();

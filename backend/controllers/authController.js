@@ -10,6 +10,11 @@ const {
   generateRefreshToken,
 } = require("../utils/generateToken");
 
+const ADMIN_ACCOUNT = {
+  name: "altamash",
+  email: "altamashmalik369@gmail.com",
+};
+
 const isProduction = process.env.NODE_ENV === "production";
 
 const cookieOptions = {
@@ -36,7 +41,7 @@ function attachAuthCookies(res, userId) {
 
 const registerUser = async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
       return res.status(400).json({
@@ -52,21 +57,22 @@ const registerUser = async (req, res) => {
       });
     }
 
-    const normalizedRole = role === "admin" ? "admin" : "user";
+    const normalizedEmail = email.trim().toLowerCase();
+    const normalizedName = name.trim();
 
-    if (await emailExists(email)) {
+    if (await emailExists(normalizedEmail)) {
       return res.status(400).json({
         success: false,
         message: "User already exists",
       });
     }
 
-    const AccountModel = getModelByRole(normalizedRole);
+    const AccountModel = getModelByRole("user");
     const user = await AccountModel.create({
-      name,
-      email,
+      name: normalizedName,
+      email: normalizedEmail,
       password,
-      role: normalizedRole,
+      role: "user",
     });
 
     return attachAuthCookies(res, user._id).status(201).json({
@@ -76,6 +82,7 @@ const registerUser = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        avatar: user.avatar || "",
       },
     });
   } catch (error) {
@@ -90,7 +97,7 @@ const registerUser = async (req, res) => {
 
 const authUser = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, loginAs } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({
@@ -99,12 +106,30 @@ const authUser = async (req, res) => {
       });
     }
 
-    const user = await findAccountByEmail(email, true);
+    const normalizedEmail = email.trim().toLowerCase();
+    const user = await findAccountByEmail(normalizedEmail, true);
 
     if (!user || !(await user.matchPassword(password))) {
       return res.status(401).json({
         success: false,
         message: "Invalid credentials",
+      });
+    }
+
+    if (loginAs === "admin" && user.role !== "admin") {
+      return res.status(403).json({
+        success: false,
+        message: "This account does not have admin access",
+      });
+    }
+
+    if (
+      user.role === "admin" &&
+      user.email.toLowerCase() !== ADMIN_ACCOUNT.email
+    ) {
+      return res.status(403).json({
+        success: false,
+        message: "Only the configured admin account can sign in as admin",
       });
     }
 
@@ -115,6 +140,7 @@ const authUser = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        avatar: user.avatar || "",
       },
     });
   } catch (error) {
@@ -155,6 +181,7 @@ const refreshUserToken = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        avatar: user.avatar || "",
       },
     });
   } catch (error) {
